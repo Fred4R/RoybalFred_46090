@@ -13,6 +13,23 @@
 using namespace std;
 
 //User Libraries
+class printData 
+{
+   public:
+      void print(int i) {
+        cout << "Printing int: " << i << endl;
+      }
+
+      void print(double  f) {
+        cout << "Printing float: " << f << endl;
+      }
+
+      void print(char* c) {
+        cout << "Printing character: " << c << endl;
+      }
+};
+
+//Check GITHUB for example of class(USE IN HEADER OPTIMALLY)
 
 //Global Constants
 const unsigned int LIGHT=299792458;     //The speed of light in miles per sec.
@@ -22,10 +39,10 @@ const unsigned int LIGHT=299792458;     //The speed of light in miles per sec.
 void TtlScrn ();                            //The title screen
 void Continu ();                            //Used to pause text
 unsigned short CritRt (short, float);       //Used to calculate critical rate
-short Battle1 (short, short, short, float); //A battle with the first enemy
+bool Battle1 (short, short, short, float);  //A battle with the first enemy
 short Battle2 (short, short, short, float); //A battle with the second enemy
 short FBattle (short, short, short, float); //Final Boss
-unsigned short Poison (short);                             //used to calculate poison
+unsigned short Poison (short);              //used to calculate poison
 
 //Execution Begins Here
 int main(int argc, char** argv) {
@@ -42,7 +59,7 @@ int main(int argc, char** argv) {
     bool Event1=false;                          //Used for distributing bonus
                                                 //for event
     
-    unsigned short gameOvr;                     //Used to end the game if player
+    bool gameOvr=false;                     //Used to end the game if player
                                                 //is defeated
     
     int NamSlct=0;                              //For choosing the main
@@ -57,15 +74,20 @@ int main(int argc, char** argv) {
     string MainC;                               //Used for selecting a name for
                                                 //the main character
     
-    short maxHlth=100;                          //The main character's maximum
-                                                //health
     
+    
+    struct McStats{
+        
+    short maxHlth=100;                          //The main character's maximum
+                                                //health    
     short str=10;                               //The main character's strength
     short dex=13;                               //dexterity, magic aptitude, and                                          
     short mag=11;                               //critical hit rate
     float crit=10.5f;
     
-    
+    };
+   McStats stats;
+   
     //Begin Game
     
     TtlScrn ();                                 //Displays Title Screen
@@ -191,7 +213,7 @@ int main(int argc, char** argv) {
     Continu();
     
     //Initiates battle function and checks for a "Game Over"
-    gameOvr=Battle1 (maxHlth, str, mag, crit);
+    gameOvr=Battle1 (stats.maxHlth, stats.str, stats.mag, stats.crit);
     
     //Ends game if main character is defeated
     if(gameOvr==1){
@@ -243,7 +265,7 @@ int main(int argc, char** argv) {
     Continu();
     
     //Event with a check if succeeded or not
-    if(rand()%20+dex>17){
+    if(rand()%20+stats.dex>17){
         cout<<"You survived!!!"<<endl;
         cout<<"Upon hoisting yourself up, you spot the Candy Bar!"<<endl;
         cout<<"Continue..."<<endl;
@@ -272,7 +294,7 @@ int main(int argc, char** argv) {
     Continu ();
     
     //Event that will dictate the ending of the game
-    if(rand()%20+mag>13){
+    if(rand()%20+stats.mag>13){
         cout<<"Your experience with magical constructs allows you to"<<endl;
         cout<<"disable the barrier!";
         cout<<"You grab the legendary treat, unwrap it, and take a bite"<<endl;
@@ -383,7 +405,7 @@ unsigned short CritRt (short base, float rate){
 
 //Function containing the entire code for the battle with the Giant Pudding
 //Entered numbers are the main characters statistics
-short Battle1 (short mcHp, short mcStr, short mcMag, float mcCrit){
+bool Battle1 (short mcHp, short mcStr, short mcMag, float mcCrit){
    
     //Declare Variables
     unsigned char mnstrUp=1;        //Checks if the enemy is still alive
@@ -397,10 +419,10 @@ short Battle1 (short mcHp, short mcStr, short mcMag, float mcCrit){
     
     unsigned char ablSlct=0;        //Tracks if the user selected an ability
     
-    short pHp=150;                  //Statistics of enemy
+    short pHp=70;                  //Statistics of enemy
     unsigned short pStr=8;
     
-    unsigned char gameOvr;          //Tracks if the user is defeated
+    bool gameOvr;          //Tracks if the user is defeated
     
     
     cout<<"The Giant Pudding slaps you!"<<endl;
@@ -429,7 +451,7 @@ short Battle1 (short mcHp, short mcStr, short mcMag, float mcCrit){
             Continu ();
             
             cout<<"GAME OVER"<<endl;
-            return gameOvr=1;
+            return gameOvr=true;
             cout<<endl;
             ;
         }
@@ -475,7 +497,7 @@ short Battle1 (short mcHp, short mcStr, short mcMag, float mcCrit){
                         cout<<"You charge head on at the enemy, and over exert";
                         cout<<" yourself to deal more damage."<<endl;
                         cout<<"The pudding has "<<endl;
-                        cout<<(pHp-=(rand()%19+15));
+                        cout<<(pHp-=(rand()%34+20));
                         cout<<" health left."<<endl;
                         cout<<"You hurt yourself in the attack!"<<endl;
                         cout<<"You have "<<(mcHp-=(rand()%4+1))<<"left"<<endl;
@@ -503,7 +525,7 @@ short Battle1 (short mcHp, short mcStr, short mcMag, float mcCrit){
             //A comical action the user can do    
             case '3':
                 cout<<"You decide to pull off some sweet dance moves"<<endl;
-                cout<<"The Rock Candy Golem just go served"<<endl;
+                cout<<"The Giant Pudding just go served"<<endl;
                 cout<<rand()%99+1;
                 cout<<" style points gained"<<endl;
                 ablSlct++;
@@ -518,7 +540,7 @@ short Battle1 (short mcHp, short mcStr, short mcMag, float mcCrit){
         //Checks if enemy is defeated
         if(pHp<=0){
             --mnstrUp;
-            cout<<"You defeated the Candy Rock Golem!!!"<<endl;
+            cout<<"You defeated the Giant Pudding!!!"<<endl;
             cout<<"Continue..."<<endl;
             Continu ();
             cout<<"You leveled up to level 44!"<<endl;
@@ -536,7 +558,7 @@ short Battle1 (short mcHp, short mcStr, short mcMag, float mcCrit){
      
     }while(!mnstrUp==0);
     
-    return gameOvr=0;
+    return gameOvr=false;
 }
 
 unsigned short Poison (short curPois){
